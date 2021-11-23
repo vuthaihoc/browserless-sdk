@@ -1,0 +1,19 @@
+{
+    "name": "doklibs/browserless-sdk",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Vu Thai Hoc",
+            "email": "vuthaihoc.ttud@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "DokLibs\\Browserless\\" : "src/"
+        }
+    },
+    "require": {
+        "php" : "^8.0",
+        "guzzlehttp/guzzle": "^7.4"
+    }
+}
