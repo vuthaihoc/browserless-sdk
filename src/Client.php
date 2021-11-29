@@ -93,8 +93,8 @@ class Client
         return self::transformResponse($response);
     }
 
-    public function download($url, $foundOn = '', $saveTo = '') : ResponseInterface|int {
-        $option = new DownloadUrl($url, $foundOn);
+    public function download($url, $foundOn = '', $saveTo = '', OptionInterface $option = null) : ResponseInterface|int {
+        $option = $option ?: new DownloadUrl($url, $foundOn);
         $endpoint = "/download";
         $data = [];
         $response = $this->execute($endpoint, $data, $option);
