@@ -8,10 +8,10 @@ use DokLibs\Browserless\Options\DownloadUrl;
 use DokLibs\Browserless\Options\OptionInterface;
 use DokLibs\Browserless\Options\PdfOption;
 use DokLibs\Browserless\Options\ScreenShot;
-use \GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Utils;
+use GuzzleHttp\Utils;
 use Psr\Http\Message\ResponseInterface;
 
 class Client
@@ -22,31 +22,34 @@ class Client
     public function __construct(array $servers, $load_balancer_algo = LoadBalancer::ROUND_ROBIN, $timeout = 300)
     {
         $this->load_balancer = new LoadBalancer($servers, $load_balancer_algo);
-        $this->guzzle = new GuzzleClient([
+        $this->guzzle        = new GuzzleClient([
             'timeout' => $timeout,
         ]);
     }
 
-    protected function execute(string $endpoint, array $data, OptionInterface $option = null) : ResponseInterface{
+    protected function execute(string $endpoint, array $data, OptionInterface $option = null): ResponseInterface
+    {
         $request = $this->makeRequest($endpoint, $data, $option);
         return $this->guzzle->send($request);
     }
 
-    public function makeRequest($endpoint, array $data = null, OptionInterface $option = null){
-        if($option){
+    public function makeRequest($endpoint, array $data = null, OptionInterface $option = null)
+    {
+        if ($option) {
             $data = array_merge($data, $option->getOptions());
         }
         $host = $this->load_balancer->getServer();
         return new Request('post',
             $host->append($endpoint), [
-                'Content-Type' => 'application/json',
+                'Content-Type'  => 'application/json',
                 'Authorization' => 'Basic ' . $host->token,
             ],
-            $data ? \GuzzleHttp\Utils::jsonEncode($data) : null
+            $data ? Utils::jsonEncode($data) : null
         );
     }
 
-    public static function transformResponse(ResponseInterface $response) : ResponseInterface{
+    public static function transformResponse(ResponseInterface $response): ResponseInterface
+    {
         return new Response(
             $response->getHeaderLine('x-response-code'),
             $response->getHeaders(),
@@ -56,49 +59,53 @@ class Client
         );
     }
 
-    public function content($url, OptionInterface $option = null) : ResponseInterface{
+    public function content($url, OptionInterface $option = null): ResponseInterface
+    {
         $endpoint = "/content";
-        $data = [
+        $data     = [
             "url" => $url,
         ];
         $response = $this->execute($endpoint, $data, $option);
         return self::transformResponse($response);
     }
 
-    public function pdf($url, OptionInterface $option = null, $saveTo = '') : ResponseInterface|int {
-        $option = $option ?: new PdfOption;
+    public function pdf($url, OptionInterface $option = null, $saveTo = ''): ResponseInterface|int
+    {
+        $option   = $option ?: new PdfOption;
         $endpoint = "/pdf";
-        $data = [
+        $data     = [
             "url" => $url,
         ];
         $response = $this->execute($endpoint, $data, $option);
-        if($saveTo && $response->getHeaderLine('content-type') == 'application/pdf'){
+        if ($saveTo && $response->getHeaderLine('content-type') == 'application/pdf') {
             return file_put_contents($saveTo, $response->getBody()->getContents());
         }
         return self::transformResponse($response);
     }
 
-    public function screenshot($url, OptionInterface $option = null, $saveTo = '') : ResponseInterface|int {
-        $option = $option ?: new ScreenShot;
+    public function screenshot($url, OptionInterface $option = null, $saveTo = ''): ResponseInterface|int
+    {
+        $option   = $option ?: new ScreenShot;
         $endpoint = "/screenshot";
-        $data = [
+        $data     = [
             "url" => $url,
         ];
         $response = $this->execute($endpoint, $data, $option);
-        if($saveTo &&
+        if ($saveTo &&
             str_starts_with($response->getHeaderLine('content-type'), 'image/')
-        ){
+        ) {
             return file_put_contents($saveTo, $response->getBody()->getContents());
         }
         return self::transformResponse($response);
     }
 
-    public function download($url, $foundOn = '', $saveTo = '') : ResponseInterface|int {
-        $option = new DownloadUrl($url, $foundOn);
+    public function download($url, $foundOn = '', $saveTo = '', string $scripts = ''): ResponseInterface|int
+    {
+        $option   = new DownloadUrl($url, $foundOn, $scripts);
         $endpoint = "/download";
-        $data = [];
+        $data     = [];
         $response = $this->execute($endpoint, $data, $option);
-        if($saveTo){
+        if ($saveTo) {
             return file_put_contents($saveTo, $response->getBody()->getContents());
         }
         return self::transformResponse($response);

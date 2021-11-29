@@ -9,7 +9,7 @@ class DownloadUrl extends CommonOptions
     protected $options = [
         "context" => [
 
-            ]
+        ]
     ];
 
     protected $script = <<<JS
@@ -32,13 +32,15 @@ module.exports = async ({ page:a, context:b }) => {
 };
 JS;
 
-    public function __construct($url, $foundOn)
+    public function __construct($url, $foundOn, string $script = "")
     {
         $this->options['context'] = [
-            'url' => $url,
+            'url'     => $url,
             'foundOn' => $foundOn,
         ];
-
+        if ($script) {
+            $this->script = $script;
+        }
         $this->options['code'] = $this->script;
 
     }
