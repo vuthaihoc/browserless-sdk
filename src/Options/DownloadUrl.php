@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Download file from url with found on option
+ * idea: giả lập hoặc truy cập trang foundOn, sau khi inject link vào trang và trigger click action.
+ * note: do link nếu không phải link download thì browserless sẽ vẫn chờ nên cần các đoạn scrip để kiểm tra idle
+ * bằng cách đếm số request và response(success or fail) nếu bằng nhau và không nhận được response dạng download thì return
+ * để dừng browserless
+ */
 
 namespace DokLibs\Browserless\Options;
 
@@ -28,18 +35,15 @@ module.exports = async ({ page:a, context:b }) => {
     var have_download = false;
     a.on('request', (request) => {
         requested++;
-        console.log('--------', requested, responses);
     })
     a.on('response', (response) => {
         responses++;
         if(response.headers()['content-disposition'] ?? false){
             have_download = true;
         }
-        console.log('--------y', requested, responses, response.headers()['content-disposition'] ?? 'uuuuuu');
     })
     a.on('requestfailed', (request) => {
         responses++;
-        console.log('--------n', requested, responses);
     })
     await a.evaluate((url) => {
         var link = document.querySelector('a');
