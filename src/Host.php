@@ -13,8 +13,13 @@ class Host
     ){
     }
 
-    public function append($endpoint) : string {
-        return rtrim($this->host, "/") . "/" . ltrim($endpoint, "/");
+    public function append($endpoint, $stealth = true, $trackingId = '', $timeout = 0) : string {
+        return rtrim($this->host, "/") . "/"
+            . ltrim($endpoint, "/")
+            . "?token=" . $this->token
+            . ($stealth ? "&stealth" : "")
+            . ($trackingId ? "&trackingId=" . $trackingId : "")
+            . ($timeout ? "&timeout=" . $timeout : "");
     }
 
 }
