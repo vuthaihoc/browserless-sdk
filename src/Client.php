@@ -25,6 +25,7 @@ class Client
         $this->load_balancer = new LoadBalancer($servers, $load_balancer_algo);
         $this->guzzle = new GuzzleClient([
             'timeout' => $timeout,
+            'connect_timeout' => 5,
         ]);
     }
 
