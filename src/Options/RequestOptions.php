@@ -49,7 +49,7 @@ trait RequestOptions
      * 'websocket','manifest','other'
      * @return $this
      */
-    public function rejectResourceTypes(string ...$types) : self {
+    public function setRejectResourceTypes(string ...$types) : self {
         if($types[0] === null){
             if($this->options['rejectResourceTypes'] ?? false){
                 unset($this->options['rejectResourceTypes']);
