@@ -22,4 +22,11 @@ class Host
             . ($timeout ? "&timeout=" . $timeout : "");
     }
 
+    public function appendWithQuery($endpoint, string $query = '') : string {
+        return rtrim($this->host, "/") . "/"
+            . ltrim($endpoint, "/")
+            . "?token=" . $this->token
+            . ($query ? "&" . $query : "");
+    }
+
 }

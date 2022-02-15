@@ -10,6 +10,7 @@ trait QueryOptions
         'blockAds' => null,
         'ignoreHTTPSErrors' => null,
         'slowMo' => null,
+        '--proxy-server' => null,
     ];
 
     public function setBlockAds($blockAds = null){
@@ -27,6 +28,11 @@ trait QueryOptions
         return $this;
     }
 
+    public function setProxy($proxy = null){
+        $this->query_options['--proxy-server'] = $proxy;
+        return $this;
+    }
+
     /**
      * @param array|string $as_array
      */
@@ -37,7 +43,11 @@ trait QueryOptions
         }elseif(count($options)){
             $queries = [];
             foreach ($options as $k => $v){
-                $queries[] = $k . "=" . urlencode($v);
+                if($v === true){
+                    $queries[] = $k;
+                }else{
+                    $queries[] = $k . "=" . $v;
+                }
             }
             return implode("&", $queries);
         }else{

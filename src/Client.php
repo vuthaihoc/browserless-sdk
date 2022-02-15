@@ -41,7 +41,7 @@ class Client
         $host = $this->load_balancer->getServer();
         $this->last_host = $host->host;
         return new Request('post',
-            $host->append($endpoint), [
+            $host->appendWithQuery($endpoint, $option->getQuery()), [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Basic ' . $host->token,
             ],
