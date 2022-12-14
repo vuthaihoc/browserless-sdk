@@ -109,4 +109,11 @@ class Client
         return self::transformResponse($response, $this->last_host);
     }
 
+    public function function($url, CommonOptions $option = null) : ResponseInterface{
+        $endpoint = "/function";
+        $data = [];
+        $response = $this->execute($endpoint, $data, $option);
+        return self::transformResponse($response, $this->last_host);
+    }
+
 }
