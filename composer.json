@@ -17,6 +17,12 @@
         "guzzlehttp/guzzle": "^7.4"
     },
     "require-dev": {
-        "symfony/var-dumper": "^6.0"
+        "symfony/var-dumper": "^6.0",
+        "pestphp/pest": "^2.35"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
