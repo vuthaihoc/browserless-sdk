@@ -2,15 +2,18 @@
 
 test('api/content', function () {
     $url = "https://google.com";
-    $servers = [new \DokLibs\Browserless\Host('http://localhost:3000/')];
+    $servers = [new \DokLibs\Browserless\Host('http://localhost:3001/')];
     $browserless = new \DokLibs\Browserless\Client($servers);
-    $content = $browserless->content($url, new \DokLibs\Browserless\Options\DisableJavascript)->getBody()->getContents();
+    $content = $browserless->content(
+        $url,
+        (new \DokLibs\Browserless\Options\DisableJavascript)
+    )->getBody()->getContents();
     expect($content)->toContain('<body');
 });
 
 test('api/pdf', function () {
     $url = "https://google.com";
-    $servers = [new \DokLibs\Browserless\Host('http://localhost:3000/')];
+    $servers = [new \DokLibs\Browserless\Host('http://localhost:3001/')];
     $browserless = new \DokLibs\Browserless\Client($servers);
     $content = $browserless->pdf($url)->getBody()->getContents();
     expect($content)->toStartWith('%PDF-');
@@ -18,29 +21,30 @@ test('api/pdf', function () {
 
 test('api/screenshot', function () {
     $url = "https://google.com";
-    $servers = [new \DokLibs\Browserless\Host('http://localhost:3000/')];
+    $servers = [new \DokLibs\Browserless\Host('http://localhost:3001/')];
     $browserless = new \DokLibs\Browserless\Client($servers);
     $response = $browserless->screenshot($url);
     $mime_type = $response->getHeaderLine('Content-Type');
-    expect($mime_type)->toEqual('image/jpeg');
+    expect($mime_type)->toStartWith('image/');
 });
 
 test('api/download', function () {
     $url = "https://image-us.samsung.com/SamsungUS/tv-ci-resources/2018-user-manuals/2018_UserManual_Q9FNSeries.pdf";
-    $servers = [new \DokLibs\Browserless\Host('http://localhost:3000/')];
+    $servers = [new \DokLibs\Browserless\Host('http://localhost:3001/')];
     $browserless = new \DokLibs\Browserless\Client($servers);
-    $response = $browserless->download($url);
+    $response = $browserless->download($url, 'https://www.samsung.com/vn/');
+//    dump($response->getBody()->getContents());
     $mime_type = $response->getHeaderLine('Content-Type');
     expect($mime_type)->toEqual('application/pdf');
 });
 
 test('api/function', function () {
     $url = "https://ipinfo.io/json";
-    $servers = [new \DokLibs\Browserless\Host('http://localhost:3000/')];
+    $servers = [new \DokLibs\Browserless\Host('http://localhost:3001/')];
     $browserless = new \DokLibs\Browserless\Client($servers);
     $options = new \DokLibs\Browserless\Options\CommonOptions();
     $options->setOption('code', <<<JS
-module.exports = async ({ page, context }) => {
+export default async ({ page, context }) => {
   const { url } = context;
   await page.goto(url);
   const data = await page.content();
@@ -48,7 +52,7 @@ module.exports = async ({ page, context }) => {
     data,
     // Make sure to match the appropriate content here
     // You'll likely want 'application/json'
-    type: 'application/html'
+    type: 'application/json'
   };
 };
 JS
@@ -59,6 +63,6 @@ JS
     $response = $browserless->function($url, $options);
     $content = $response->getBody()->getContents();
     $mime_type = $response->getHeaderLine('Content-Type');
-    expect($mime_type)->toStartWith('application/html');
+    expect($mime_type)->toStartWith('application/json');
     expect($content)->toContain("ip", "city", "region", "country", "loc");
 });

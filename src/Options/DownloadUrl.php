@@ -20,11 +20,12 @@ class DownloadUrl extends CommonOptions
     ];
 
     protected $script = <<<JS
-module.exports = async ({ page:a, context:b }) => {
-    if(b.foundOn){
-      await a.goto(b.foundOn)
+export default async ({ page, context }) => {
+  const sleep = ms => new Promise(res => setTimeout(res, ms));
+    if(context.foundOn){
+      await page.goto(context.foundOn)
     }else{
-        await a.setContent(`<!doctype html>
+        await page.setContent(`<!doctype html>
   <html>
     <head><meta charset='UTF-8'><title>Test</title></head>
     <body><a href='#'>Link</a></body>
@@ -33,26 +34,26 @@ module.exports = async ({ page:a, context:b }) => {
     var requested = 0;
     var responses = 0;
     var have_download = false;
-    a.on('request', (request) => {
+    page.on('request', (request) => {
         requested++;
     })
-    a.on('response', (response) => {
+    page.on('response', (response) => {
         responses++;
         if(response.headers()['content-disposition'] ?? false){
             have_download = true;
         }
     })
-    a.on('requestfailed', (request) => {
+    page.on('requestfailed', (request) => {
         responses++;
     })
-    await a.evaluate((url) => {
+    await page.evaluate((url) => {
         var link = document.querySelector('a');
         link.href = url;
         link.click();
-      }, b.url);
+      }, context.url);
     let pair = 0;
     for (let i = 0; i<10; i++){
-        await a.waitForTimeout(500);
+        sleep(500);
         if(requested === responses){
             if(requested !== pair){
                 pair = requested;                
