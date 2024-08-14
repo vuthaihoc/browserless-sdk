@@ -13,6 +13,17 @@ test('api/pdf', function () {
     $servers = [new \DokLibs\Browserless\Host('http://localhost:3000/')];
     $browserless = new \DokLibs\Browserless\Client($servers);
     $content = $browserless->pdf($url)->getBody()->getContents();
+//    file_put_contents('google.com.pdf', $content);
+    expect($content)->toStartWith('%PDF-');
+});
+
+
+test('api/pdf2', function () {
+    $url = "https://google.com";
+    $servers = [new \DokLibs\Browserless\Host('http://localhost:3001/')];
+    $browserless = new \DokLibs\Browserless\Client($servers);
+    $content = $browserless->pdf($url, (new \DokLibs\Browserless\Options\PdfOption())->usingV2())->getBody()->getContents();
+//    file_put_contents('google.com.pdf', $content);
     expect($content)->toStartWith('%PDF-');
 });
 

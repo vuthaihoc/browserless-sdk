@@ -14,4 +14,13 @@ class PdfOption extends CommonOptions
             'format' => 'A4',
         ]
     ];
+
+    public function usingV2(): self
+    {
+        if(isset($this->options['safeMode'])){
+            unset($this->options['safeMode']);
+        }
+        return $this;
+    }
+
 }

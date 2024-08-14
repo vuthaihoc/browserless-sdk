@@ -8,7 +8,7 @@ class Host
 {
     public function __construct(
         public $host,
-        public $token = '',
+        public $token = 'null',
         public $ip = '',
     ){
     }
