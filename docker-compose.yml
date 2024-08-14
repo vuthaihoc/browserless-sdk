@@ -1,0 +1,33 @@
+services:
+  browserless:
+    image: vuthaihoc/chrome:latest
+    ports:
+      - 3000:3000
+    environment:
+      - MAX_CONCURRENT_SESSIONS=4
+      - MAX_QUEUE_LENGTH=4
+      - ENABLE_DEBUGGER=false
+      - DISABLE_AUTO_SET_DOWNLOAD_BEHAVIOR=true
+      - WORKSPACE_DELETE_EXPIRED=true
+      - WORKSPACE_EXPIRE_DAYS=7
+      - PREBOOT_CHROME=true
+      - KEEP_ALIVE=true
+      - MAX_CPU_PERCENT=90
+      - MAX_MEMORY_PERCENT=90
+      - CONNECTION_TIMEOUT=15000
+#      - DEFAULT_USER_DATA_DIR=/tmp/v1-profile
+      # - TOKEN=xxx
+    restart: always
+  browserless2:
+    image: ghcr.io/browserless/chromium
+    ports:
+      - 3001:3000
+    environment:
+      - CONCURRENT=4
+      - QUEUED=4
+      - MAX_CPU_PERCENT=90
+      - MAX_MEMORY_PERCENT=90
+      - ALLOW_GET=true
+      - TIMEOUT=15000
+#      - DATA_DIR=/tmp/v2-profile
+    restart: always

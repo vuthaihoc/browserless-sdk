@@ -43,3 +43,26 @@ $option = (new \DokLibs\Browserless\Options\ScreenShot)->merge(
         );
 $browserless->screenshot($url, $option, './123dok.jpg'); 
 ```
+
+# Tesing
+
+Using pest
+
+```bash
+➜  browserless-sdk git:(v1) ✗ ./vendor/bin/pest                         
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ api/content                                                                                                                                                                                                                0.95s  
+  ✓ api/pdf                                                                                                                                                                                                                    1.98s  
+  ✓ api/pdf2                                                                                                                                                                                                                   2.10s  
+  ✓ api/screenshot                                                                                                                                                                                                             1.54s  
+  ✓ api/download                                                                                                                                                                                                               5.08s  
+  ✓ api/function                                                                                                                                                                                                               0.51s  
+  ✓ api/function2                                                                                                                                                                                                              1.10s  
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ example
+
+  Tests:    8 passed (18 assertions)
+  Duration: 13.30s
+```
