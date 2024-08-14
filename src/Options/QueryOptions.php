@@ -70,4 +70,10 @@ trait QueryOptions
         return $this;
     }
 
+    public function addQuery($key, $value): self
+    {
+        $this->query_options[$key] = $value;
+
+    }
+
 }
