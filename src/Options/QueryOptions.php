@@ -73,7 +73,7 @@ trait QueryOptions
     public function addQuery($key, $value): self
     {
         $this->query_options[$key] = $value;
-
+        return $this;
     }
 
 }
